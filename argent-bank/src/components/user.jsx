@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from './Header';
 import Footer from './Footer';
-import { fetchUserProfile, updateUserProfile } from '../Redux/userSlice';
+import { fetchUserProfile, updateUserProfile} from '../Redux/userSlice';
+
 
 const User = () => {
   const dispatch = useDispatch();
+
   const userState = useSelector(state => state.user);
   const { user, status, error } = userState;
 
@@ -50,19 +52,23 @@ const User = () => {
             Welcome back
             <br />
             {editMode ? (
-              <div className='edit-button'>
+              <div >
                 <input 
+                className='firstname'
                   type="text" 
                   value={firstName} 
                   onChange={(e) => setFirstName(e.target.value)} 
                 />
-                <input 
+                <input
+                className='lastname' 
                   type="text" 
                   value={lastName} 
                   onChange={(e) => setLastName(e.target.value)} 
                 />
-                <button className='edit-button' onClick={handleSave}>Save</button>
-                <button onClick={() => { setEditMode(false); setFirstName(user.firstName); setLastName(user.lastName); }}>Cancel</button>
+                <br/>
+                <button className='save' onClick={handleSave}>Save</button>
+              
+                <button className='change' onClick={() => { setEditMode(false); setFirstName(user.firstName); setLastName(user.lastName); }}>Cancel</button>
               </div>
             ) : (
               <>
@@ -72,6 +78,7 @@ const User = () => {
               </>
             )}
           </h1>
+      
         </div>
         <h2 className="sr-only">Accounts</h2>
         <section className="account">

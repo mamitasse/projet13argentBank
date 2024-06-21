@@ -37,3 +37,16 @@
 .main-nav-item .fa {
     margin-right: 5px;
 }
+.logout-button{
+    color: #2c3e50;
+    font-weight: bold;
+
+}
+.logout-button :hover {
+    text-decoration: underline;
+}
+.user-name{
+    color: #2c3e50;
+    font-weight: bold;
+
+}

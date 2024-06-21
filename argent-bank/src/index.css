@@ -341,3 +341,18 @@ body {
 .main-nav-item .fa {
   margin-right: 5px;
 }
+.user-name{
+  color: #2c3e50;
+  font-weight: bold;
+  margin-right: 5px;
+}
+.arrow{
+  margin-right: 7px;
+}
+.firstname{
+margin-right: 20px;
+}
+.save{
+  margin-right: 20px;
+  padding-right: 20px;
+}
