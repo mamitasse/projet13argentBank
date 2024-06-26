@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import Header from './Header';
-import Footer from './Footer';
-import { fetchUserProfile, updateUserProfile} from '../Redux/userSlice';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
+import { fetchUserProfile, updateUserProfile } from "../Redux/userSlice";
 
 const User = () => {
   const dispatch = useDispatch();
 
-  const userState = useSelector(state => state.user);
+  const userState = useSelector((state) => state.user);
   const { user, status, error } = userState;
 
   const [editMode, setEditMode] = useState(false);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -31,11 +29,11 @@ const User = () => {
     setEditMode(false);
   };
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return <div>Loading...</div>;
   }
 
-  if (status === 'failed') {
+  if (status === "failed") {
     return <div>Error: {error}</div>;
   }
 
@@ -45,40 +43,54 @@ const User = () => {
 
   return (
     <div>
-      <Header />
       <main className="main bg-dark">
         <div className="header">
           <h1>
             Welcome back
             <br />
             {editMode ? (
-              <div >
-                <input 
-                className='firstname'
-                  type="text" 
-                  value={firstName} 
-                  onChange={(e) => setFirstName(e.target.value)} 
+              <div>
+                <input
+                  className="firstname"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
                 <input
-                className='lastname' 
-                  type="text" 
-                  value={lastName} 
-                  onChange={(e) => setLastName(e.target.value)} 
+                  className="lastname"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
-                <br/>
-                <button className='save' onClick={handleSave}>Save</button>
-              
-                <button className='change' onClick={() => { setEditMode(false); setFirstName(user.firstName); setLastName(user.lastName); }}>Cancel</button>
+                <br />
+                <button className="save" onClick={handleSave}>
+                  Save
+                </button>
+
+                <button
+                  className="change"
+                  onClick={() => {
+                    setEditMode(false);
+                    setFirstName(user.firstName);
+                    setLastName(user.lastName);
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
             ) : (
               <>
                 {user.firstName} {user.lastName}!
-                <br /> 
-                <button className='edit-button' onClick={() => setEditMode(true)}>Edit Name</button>
+                <br />
+                <button
+                  className="edit-button"
+                  onClick={() => setEditMode(true)}
+                >
+                  Edit Name
+                </button>
               </>
             )}
           </h1>
-      
         </div>
         <h2 className="sr-only">Accounts</h2>
         <section className="account">
@@ -112,7 +124,7 @@ const User = () => {
           </div>
         </section>
       </main>
-      <Footer />
+   
     </div>
   );
 };

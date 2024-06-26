@@ -1,11 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import argentBankLogo from '../assets/img/argentBankLogo.png';
 import { logout } from '../Redux/userSlice';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -16,7 +13,8 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/sign-in');
+   console.log('handellogout')
+    //navigate('/sign-in'); // Redirige vers la page d'accueil après la déconnexion
   };
 
   return (
@@ -30,15 +28,12 @@ const Header = () => {
           />
           <h1 className="sr-only">Argent Bank</h1>
         </Link>
-        <div >
+        <div>
           {user ? (
             <>
-            <i className="fa fa-user-circle"></i>
-              <span className="user-name"> {user.firstName}  </span>
-             <span className='arrow'>  <i className="fa-solid fa-arrow-right-from-bracket" /></span> 
-            
-              
-              <Link className="main-nav-item" onClick={handleLogout} >Sign Out</Link>
+              <i className="fa fa-user-circle"></i>
+              <span className="user-name"> {user.firstName}   <i className="fa-solid fa-arrow-right-from-bracket" /> </span>
+              <Link to='/sign-in' className="main-nav-item" onClick={handleLogout} >Sign Out</Link>
             </>
           ) : (
             <Link className="main-nav-item" to="/sign-in">

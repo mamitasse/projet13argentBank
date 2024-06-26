@@ -1,20 +1,19 @@
 // src/components/HomePage.js
 import React from 'react';
-import './HomePage.css'; // Importez le fichier CSS correspondant
+//import './HomePage.css'; // Importez le fichier CSS correspondant
 
 import { useSelector } from 'react-redux';
 import iconChat from '../assets/img/icon-chat.png';
 import iconMoney from '../assets/img/icon-money.png';
 import iconSecurity from '../assets/img/icon-security.png';
-import Header from './Header.jsx';
-import Footer from './Footer.jsx';
+
 
 const HomePage = () => {
   const user = useSelector((state) => state.user.user);
 
   return (
     <div className="home-page">
-      <Header />
+     
       <main>
         <div className="hero">
           <section className="hero-content">
@@ -64,7 +63,7 @@ const HomePage = () => {
           </div>
         </section>
       </main>
-      <Footer />
+    
     </div>
   );
 };

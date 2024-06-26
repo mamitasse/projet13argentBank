@@ -1,17 +1,20 @@
-// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import HomePage from "./components/HomePage";
-import SignIn from "./components/sign-in"; // Correction du chemin d'importation
-import User from "./components/user";
+import HomePage from "./pages/HomePage";
+import SignIn from "./pages/sign-in"; // Correction du chemin d'importation
+import User from "./pages/user";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 
 const App = () => (
   <Router>
+    <Header />
     <Routes>
-      <Route exact path="/" element={<HomePage />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/user" element={<User />} />
     </Routes>
+    <Footer />
   </Router>
 );
 

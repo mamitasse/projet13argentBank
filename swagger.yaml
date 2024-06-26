@@ -33,6 +33,7 @@ paths:
           description: Invalid fields
         "500":
           description: Internal server error
+
   /user/signup:
     post:
       tags:
@@ -57,6 +58,7 @@ paths:
           description: Invalid fields
         "500":
           description: Internal server error
+
   /user/profile:
     get:
       security:
@@ -78,10 +80,17 @@ paths:
           description: User profile retrieved successfully
           schema:
             $ref: "#/definitions/ApiResponse"
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this resource
+        "404":
+          description: Not Found - User profile not found
         "400":
           description: Invalid fields
         "500":
           description: Internal server error
+
     put:
       security:
         - Bearer: []
@@ -108,10 +117,17 @@ paths:
           description: User profile updated successfully
           schema:
             $ref: "#/definitions/ApiResponse"
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this resource
+        "404":
+          description: Not Found - User profile not found
         "400":
           description: Invalid fields
         "500":
           description: Internal server error
+
   /user/accounts/{accountId}:
     get:
       tags:
@@ -136,12 +152,19 @@ paths:
           description: Account retrieved successfully
           schema:
             $ref: "#/definitions/AccountsResponse"
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this account
+        "404":
+          description: Not Found - Account not found
         "400":
           description: Invalid fields
         "500":
           description: Internal server error
       security:
         - Bearer: []
+
   /user/accounts/{accountId}/transactions:
     get:
       tags:
@@ -159,16 +182,16 @@ paths:
           type: integer
           required: true
           description: Account ID
-        - name: fromDate
+        - name: fromMonth
           in: query
           type: string
           required: false
-          description: Start date for fetching transactions
-        - name: toDate
+          description: Start month for fetching transactions (YYYY-MM)
+        - name: toMonth
           in: query
           type: string
           required: false
-          description: End date for fetching transactions
+          description: End month for fetching transactions (YYYY-MM)
       produces:
         - application/json
       responses:
@@ -176,12 +199,19 @@ paths:
           description: Account transactions retrieved successfully
           schema:
             $ref: "#/definitions/TransactionsResponse"
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this account
+        "404":
+          description: Not Found - Account or transactions not found
         "400":
           description: Invalid fields
         "500":
           description: Internal server error
       security:
         - Bearer: []
+
   /user/accounts/{accountId}/transactions/{transactionId}:
     get:
       tags:
@@ -211,12 +241,19 @@ paths:
           description: Transaction retrieved successfully
           schema:
             $ref: "#/definitions/Transaction"
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this transaction
+        "404":
+          description: Not Found - Transaction not found
         "400":
           description: Invalid fields
         "500":
           description: Internal server error
       security:
         - Bearer: []
+
   /user/accounts/{accountId}/transactions/{transactionId}/category:
     patch:
       tags:
@@ -242,7 +279,7 @@ paths:
         - name: body
           in: body
           required: true
-          description: Update transaction's information
+          description: Update transaction's category
           schema:
             $ref: "#/definitions/TransactionsUpdateCategory"
       consumes:
@@ -251,15 +288,73 @@ paths:
         - application/json
       responses:
         "200":
-          description: Transaction updated successfully
+          description: Transaction category updated successfully
           schema:
             $ref: "#/definitions/Transaction"
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this transaction
+        "404":
+          description: Not Found - Transaction not found
         "400":
           description: Bad request. User ID/transaction ID must be an integer and larger than 0
         "500":
           description: Internal server error
       security:
         - Bearer: []
+
+  /user/accounts/{accountId}/transactions/{transactionId}/notes:
+    patch:
+      tags:
+        - User Transactions
+      summary: Update transaction notes
+      description: API for updating transaction's notes
+      parameters:
+        - name: Authorization
+          in: header
+          type: string
+          required: true
+          description: Bearer JWT token
+        - name: accountId
+          in: path
+          type: integer
+          required: true
+          description: User's account ID
+        - name: transactionId
+          in: path
+          type: integer
+          required: true
+          description: Transaction's ID
+        - name: body
+          in: body
+          required: true
+          description: Update transaction's notes
+          schema:
+            $ref: "#/definitions/TransactionsUpdateNotes"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Transaction notes updated successfully
+          schema:
+            $ref: "#/definitions/Transaction"
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this transaction
+        "404":
+          description: Not Found - Transaction not found
+        "400":
+          description: Bad request. User ID/transaction ID must be an integer and larger than 0
+        "500":
+          description: Internal server error
+      security:
+        - Bearer: []
+
+  /user/accounts/{accountId}/transactions/{transactionId}/category/delete:
     delete:
       tags:
         - User Transactions
@@ -287,61 +382,26 @@ paths:
         - application/json
       responses:
         "204":
-          description: Transaction deleted successfully
+          description: Transaction category deleted successfully
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this transaction
+        "404":
+          description: Not Found - Transaction not found
         "400":
           description: Bad request. User ID/transaction ID must be an integer and larger than 0
         "500":
           description: Internal server error
       security:
         - Bearer: []
-  /user/accounts/{accountId}/transactions/{transactionId}/notes:
-    patch:
-      tags:
-        - User Transactions
-      summary: Update transaction notes
-      description: API for updating transaction's notes
-      parameters:
-        - name: Authorization
-          in: header
-          type: string
-          required: true
-          description: Bearer JWT token
-        - name: accountId
-          in: path
-          type: integer
-          required: true
-          description: User's account ID
-        - name: transactionId
-          in: path
-          type: integer
-          required: true
-          description: Transaction's ID
-        - name: body
-          in: body
-          required: true
-          description: Update transaction's information
-          schema:
-            $ref: "#/definitions/TransactionsUpdateNotes"
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Transaction updated successfully
-          schema:
-            $ref: "#/definitions/Transaction"
-        "400":
-          description: Bad request. User ID/transaction ID must be an integer and larger than 0
-        "500":
-          description: Internal server error
-      security:
-        - Bearer: []
+
+  /user/accounts/{accountId}/transactions/{transactionId}/notes/delete:
     delete:
       tags:
         - User Transactions
       summary: Delete transaction notes
-      description: API for deleting a transaction's notes
+      description: API for deleting transaction's notes
       parameters:
         - name: Authorization
           in: header
@@ -364,7 +424,13 @@ paths:
         - application/json
       responses:
         "204":
-          description: Transaction deleted successfully
+          description: Transaction notes deleted successfully
+        "401":
+          description: Unauthorized - Invalid or missing authentication token
+        "403":
+          description: Forbidden - User does not have access to this transaction
+        "404":
+          description: Not Found - Transaction not found
         "400":
           description: Bad request. User ID/transaction ID must be an integer and larger than 0
         "500":
@@ -372,129 +438,136 @@ paths:
       security:
         - Bearer: []
 
-securityDefinitions:
-  Bearer:
-    type: apiKey
-    name: Authorization
-    in: header
-
 definitions:
-  User:
-    type: object
-    properties:
-      email:
-        type: string
-        description: User email
-      password:
-        type: string
-        description: User password
-      firstName:
-        type: string
-        description: User first name
-      lastName:
-        type: string
-        description: User last name
   Login:
     type: object
+    required:
+      - email
+      - password
     properties:
       email:
         type: string
-        description: User email
+        format: email
       password:
         type: string
-        description: User password
-  ApiResponse:
-    type: object
-    properties:
-      status:
-        type: integer
-      message:
-        type: string
-      body:
-        type: object
-        properties:
-          id:
-            type: string
-          email:
-            type: string
+        format: password
+
   LoginResponse:
     type: object
     properties:
       token:
         type: string
+      user:
+        $ref: "#/definitions/User"
+
+  ApiResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      message:
+        type: string
+
+  User:
+    type: object
+    required:
+      - email
+      - password
+      - firstName
+      - lastName
+    properties:
+      id:
+        type: integer
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        format: password
+      firstName:
+        type: string
+      lastName:
+        type: string
+
   UserProfile:
     type: object
+    required:
+      - firstName
+      - lastName
     properties:
       firstName:
         type: string
       lastName:
         type: string
+
   AccountsResponse:
     type: object
     properties:
-      status:
-        type: integer
-      message:
-        type: string
-        example: Accounts retrieved successfully
-      body:
+      accounts:
         type: array
         items:
           $ref: "#/definitions/Account"
+
   Account:
     type: object
     properties:
       id:
         type: integer
-      created:
-        type: string
-        description: Account creation date
       name:
         type: string
-        example: credit card
-      currency:
-        type: string
-        example: $
       balance:
         type: number
-        example: 123
-  TransactionsResponse:
-    type: object
-    properties:
-      status:
-        type: integer
-      message:
-        type: string
-        example: Transactions retrieved successfully
-      body:
+        format: double
+      transactions:
         type: array
         items:
           $ref: "#/definitions/Transaction"
+
+  TransactionsResponse:
+    type: object
+    properties:
+      transactions:
+        type: array
+        items:
+          $ref: "#/definitions/Transaction"
+
   Transaction:
     type: object
     properties:
       id:
         type: integer
-        description: Transaction ID
-      created:
+      date:
         type: string
-        description: Transaction date
+        format: date
       description:
         type: string
-        description: Transaction description
       amount:
         type: number
-        description: Transaction amount
+        format: double
       balance:
         type: number
-        description: Account balance after transaction
+        format: double
+      type:
+        type: string
+      category:
+        type: string
+      notes:
+        type: string
+
   TransactionsUpdateCategory:
     type: object
     properties:
       category:
         type: string
+
   TransactionsUpdateNotes:
     type: object
     properties:
       notes:
         type: string
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
