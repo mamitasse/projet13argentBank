@@ -169,8 +169,8 @@ paths:
     get:
       tags:
         - User Transactions
-      summary: Get account transactions
-      description: API for getting account transactions
+      summary: Get account transactions for the current month
+      description: API for getting account transactions for the current month if no date range is provided
       parameters:
         - name: Authorization
           in: header
@@ -186,12 +186,12 @@ paths:
           in: query
           type: string
           required: false
-          description: Start month for fetching transactions (YYYY-MM)
+          description: Start month for fetching transactions (YYYY-MM). If not provided, transactions for the current month will be returned.
         - name: toMonth
           in: query
           type: string
           required: false
-          description: End month for fetching transactions (YYYY-MM)
+          description: End month for fetching transactions (YYYY-MM). If not provided, transactions for the current month will be returned.
       produces:
         - application/json
       responses:
