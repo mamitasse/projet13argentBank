@@ -11,7 +11,7 @@ export const login = createAsyncThunk(
       const response = await axios.post(`${API_URL}/login`, userData);
       return response.data.body; // Retourne les données de l'utilisateur connecté et le token JWT
     } catch (error) {
-      return rejectWithValue(error.response.data); // Rejet avec les données de l'erreur
+      return rejectWithValue(error.response?.data || error.message); // Rejet avec les données de l'erreur
     }
   }
 );
@@ -22,6 +22,9 @@ export const fetchUserProfile = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
+      if (!token) {
+        throw new Error("Token is missing");
+      }
       const response = await axios.post(
         `${API_URL}/profile`,
         {},
@@ -33,7 +36,7 @@ export const fetchUserProfile = createAsyncThunk(
       );
       return response.data.body;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -44,6 +47,9 @@ export const updateUserProfile = createAsyncThunk(
   async (userData, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
+      if (!token) {
+        throw new Error("Token is missing");
+      }
       const response = await axios.put(`${API_URL}/profile`, userData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -51,7 +57,7 @@ export const updateUserProfile = createAsyncThunk(
       });
       return response.data.body;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -60,7 +66,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     user: null, // État initial de l'utilisateur (non connecté)
-    token: null, // Token JWT
+    token: localStorage.getItem('token') || null, // Token JWT initialisé depuis localStorage
     status: "idle",
     error: null,
   },
@@ -70,27 +76,23 @@ const userSlice = createSlice({
       state.token = null;
       state.status = "idle";
       state.error = null;
+      localStorage.removeItem('token'); // Supprime le token de localStorage lors de la déconnexion
     },
   },
   extraReducers: (builder) => {
     // Gestion des différents états des actions asynchrones
     builder
       // Gestion du login
-      // État lorsque la connexion est en cours
-
       .addCase(login.pending, (state) => {
         state.status = "loading";
       })
-
-      // État lorsque la connexion est réussie
       .addCase(login.fulfilled, (state, action) => {
         console.log("Login fulfilled: ", action.payload); // Journal ici
         state.status = "succeeded";
         state.token = action.payload.token;
-        // Assure de déclencher fetchUserProfile après avoir obtenu le token
+        localStorage.setItem('token', action.payload.token); // Stocke le token dans localStorage lors de la connexion
+        state.error = null;
       })
-
-      // État lorsque la connexion échoue
       .addCase(login.rejected, (state, action) => {
         console.log("Login rejected: ", action.payload); // Journal ici
         state.status = "failed";
@@ -98,32 +100,28 @@ const userSlice = createSlice({
       })
 
       // Gestion du fetchUserProfile
-      // État lorsque la récupération du profil est en cours
       .addCase(fetchUserProfile.pending, (state) => {
         state.status = "loading";
       })
-      // État lorsque la récupération du profil est réussie
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.user = action.payload;
+        state.error = null;
       })
-      // État lorsque la récupération du profil échoue
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload?.message || "Fetch user profile failed";
       })
 
       // Gestion de updateUserProfile
-      // État lorsque la mise à jour du profil est en cours
       .addCase(updateUserProfile.pending, (state) => {
         state.status = "loading";
       })
-      // État lorsque la mise à jour du profil est réussie
       .addCase(updateUserProfile.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.user = action.payload;
+        state.error = null;
       })
-      // État lorsque la mise à jour du profil échoue
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload?.message || "Update user profile failed";
